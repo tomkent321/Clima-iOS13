@@ -10,7 +10,8 @@ import Foundation
 
 struct WeatherManager {
     
-    let weatherUrl = "https://api.openweathermap.org/data/2.5/find?&"
+    let weatherUrl = 
+
     
     func fetchWeather(cityName: String, units: String){
         let urlString = "\(weatherUrl)&units=\(units)&q=\(cityName)"
@@ -51,12 +52,46 @@ struct WeatherManager {
         do {
             let decodedData = try decoder.decode(WeatherData.self, from: weatherData)
             print(decodedData.list[0].name)
-            print("temp: \(decodedData.list[0].main.temp)")
-            print("humidity: \(decodedData.list[0].main.humidity)")
-            print("wind speed: \(decodedData.list[0].wind.speed)")
-            print("wind direction: \(decodedData.list[0].wind.deg) degrees")
+            let id = decodedData.list[0].weather[0].id
+            print("id: \(id)")
+            let symbol = getConditionName(weatherId: id)
+            print(symbol)
         } catch {
-            print(error)
+            print("did not work")
         }
+    }
+    
+    func getConditionName(weatherId: Int) -> String {
+        
+        switch weatherId {
+        case (200...299) :
+            return "cloud.bolt.fill"
+        case (300...399) :
+            return "cloud.drizzle.fill"
+        case (500...599) :
+            return "cloud.heavyrain.fill"
+        case (600...699) :
+            return "cloud.snow.fill"
+        case (711) :
+            return "smoke.fill"
+        case (721) :
+            return "sun.haze.fill"
+        case (731) :
+            return "sun.dust.fill"
+        case (741) :
+            return "cloud.fog.fill"
+        case (751...762) :
+            return "sun.dust.fill"
+        case (781) :
+            return "tornado"
+        case (800...804) :
+            return "cloud.fill"
+            
+        default:
+            return "sun.max.fill"
+            
+    
+        }
+        
     }
 }

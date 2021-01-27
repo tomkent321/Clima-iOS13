@@ -17,16 +17,17 @@ struct WeatherData: Decodable {
     
 }
 
-
 struct List: Decodable {
     let name: String
     let main: Main
     let wind: Wind
+    let weather: [Weather]
 }
 
 struct Main: Decodable {
     let temp: Double
     let humidity: Int
+    
 }
 
 struct Wind: Decodable {
@@ -34,4 +35,8 @@ struct Wind: Decodable {
     let deg: Int
 }
 
+struct Weather: Decodable {
+    let id: Int
+    
+}
 // list[0].main.temp
