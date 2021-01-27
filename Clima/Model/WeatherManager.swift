@@ -10,8 +10,11 @@ import Foundation
 
 struct WeatherManager {
     
+    
+    
     let weatherUrl = 
 
+   
     
     func fetchWeather(cityName: String, units: String){
         let urlString = "\(weatherUrl)&units=\(units)&q=\(cityName)"
@@ -35,8 +38,9 @@ struct WeatherManager {
                 }
                 
                 if let safeData = data {
-                    self.parseJSON(weatherData: safeData)
-                    print(safeData)
+                    if let weather = self.parseJSON(weatherData: safeData) {
+                        delegate?.didUpdateWeather(weather: weather)
+                    }
                 }
             }
             
@@ -47,51 +51,24 @@ struct WeatherManager {
         
     }
     
-    func parseJSON(weatherData: Data) {
+    
+    func parseJSON(weatherData: Data) -> WeatherModel? {
         let decoder = JSONDecoder()
         do {
             let decodedData = try decoder.decode(WeatherData.self, from: weatherData)
-            print(decodedData.list[0].name)
+            let name = decodedData.list[0].name
             let id = decodedData.list[0].weather[0].id
-            print("id: \(id)")
-            let symbol = getConditionName(weatherId: id)
-            print(symbol)
+            let temp = decodedData.list[0].main.temp
+           
+            let weather = WeatherModel(conditionId: id, cityName: name, temperature: temp)
+            return weather
+            
+            
         } catch {
-            print("did not work")
+            print(error)
+            return nil
         }
     }
     
-    func getConditionName(weatherId: Int) -> String {
-        
-        switch weatherId {
-        case (200...299) :
-            return "cloud.bolt.fill"
-        case (300...399) :
-            return "cloud.drizzle.fill"
-        case (500...599) :
-            return "cloud.heavyrain.fill"
-        case (600...699) :
-            return "cloud.snow.fill"
-        case (711) :
-            return "smoke.fill"
-        case (721) :
-            return "sun.haze.fill"
-        case (731) :
-            return "sun.dust.fill"
-        case (741) :
-            return "cloud.fog.fill"
-        case (751...762) :
-            return "sun.dust.fill"
-        case (781) :
-            return "tornado"
-        case (800...804) :
-            return "cloud.fill"
-            
-        default:
-            return "sun.max.fill"
-            
     
-        }
-        
-    }
 }
