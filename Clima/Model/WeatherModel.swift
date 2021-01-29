@@ -10,6 +10,9 @@ import Foundation
 
 struct WeatherModel {
     let conditionId: Int
+//    var cityName: String {
+//        return cityName.replacingOccurrences(of: "\\s+$", with: "", options: .regularExpression)
+//    }
     let cityName: String
     let temperature: Double
     
@@ -40,7 +43,9 @@ struct WeatherModel {
             return "sun.dust"
         case (781) :
             return "tornado"
-        case (800...804) :
+        case (800) :
+            return "sun.max"
+        case (801...804) :
             return "cloud"
             
         default:

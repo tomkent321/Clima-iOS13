@@ -8,7 +8,9 @@
 
 import UIKit
 
-class WeatherViewController: UIViewController, UITextFieldDelegate {
+class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManagerDelegate {
+    
+    
 
     @IBOutlet weak var conditionImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
@@ -24,6 +26,9 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
         
         // a method of the added UITextFieldDelegate to allow this WeatherViewController class
         // to monitor what is being typed in to the text field
+        
+        //***** must set the following to complete delegation
+        weatherManager.delegate = self
         searchTextField.delegate = self
     }
 
@@ -49,13 +54,23 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         
-        if let city = searchTextField.text {
+        if let city = searchTextField.text?.replacingOccurrences(of: "\\s+$", with: "", options: .regularExpression) {
             weatherManager.fetchWeather(cityName: city, units: units)
-//            cityLabel.text =
+
         }
-    
         searchTextField.text=""
-        
+    }
+    
+    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
+        DispatchQueue.main.async{
+            self.temperatureLabel.text = weather.temperatureString
+            self.cityLabel.text = weather.cityName
+            self.conditionImageView.image = UIImage(systemName: weather.conditionName)
+        }
+    }
+    
+    func didFailWithError(error: Error) {
+        print(error)
     }
 }
 
