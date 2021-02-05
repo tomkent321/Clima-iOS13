@@ -1,17 +1,12 @@
 //
 //  ViewController.swift
 //  Clima
-//
-//  Created by Angela Yu on 01/09/2019.
-//  Copyright © 2019 App Brewery. All rights reserved.
-//
 
 import UIKit
+import CoreLocation
 
-class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManagerDelegate {
+class WeatherViewController: UIViewController  {
     
-    
-
     @IBOutlet weak var conditionImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var cityLabel: UILabel!
@@ -24,14 +19,16 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // a method of the added UITextFieldDelegate to allow this WeatherViewController class
-        // to monitor what is being typed in to the text field
-        
-        //***** must set the following to complete delegation
         weatherManager.delegate = self
         searchTextField.delegate = self
     }
 
+}
+
+//MARK: - UITextFieldDelegate
+
+extension WeatherViewController: UITextFieldDelegate {
+    
     @IBAction func searchPressed(_ sender: UIButton) {
         searchTextField.endEditing(true)
         
@@ -54,12 +51,22 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         
-        if let city = searchTextField.text?.replacingOccurrences(of: "\\s+$", with: "", options: .regularExpression) {
+        if var city = searchTextField.text {
+            
+            if city.last == " " {
+                city = String(city.dropLast())
+            }
+            print(city)
             weatherManager.fetchWeather(cityName: city, units: units)
 
         }
         searchTextField.text=""
     }
+}
+
+//MARK: - WeatherMangerDelegate
+
+extension WeatherViewController: WeatherManagerDelegate {
     
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
         DispatchQueue.main.async{
@@ -73,4 +80,3 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         print(error)
     }
 }
-
