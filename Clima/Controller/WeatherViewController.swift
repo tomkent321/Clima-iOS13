@@ -33,7 +33,11 @@ class WeatherViewController: UIViewController  {
         searchTextField.delegate = self
         
     }
-
+    @IBAction func locationRequest(_ sender: UIButton) {
+        locationManager.requestLocation()
+   
+    }
+   
 }
 
 //MARK: - UITextFieldDelegate
@@ -96,11 +100,7 @@ extension WeatherViewController: WeatherManagerDelegate {
 
 extension WeatherViewController: CLLocationManagerDelegate {
     
-    @IBAction func locationRequest(_ sender: UIButton) {
-        print("location requested")
-    }
-
-   
+    
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
              print("error:: \(error.localizedDescription)")
@@ -115,14 +115,16 @@ extension WeatherViewController: CLLocationManagerDelegate {
         func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
             
             if let location = locations.last {
+                locationManager.stopUpdatingLocation()
                 let lat = location.coordinate.latitude
                 let lon = location.coordinate.longitude
-                print("location: \(lat), \(lon)")
+                weatherManager.fetchWeather(lattitude: lat, longitude: lon, units: units)
+                
             }
 
         }
   
-   
+  
     
 
 }
